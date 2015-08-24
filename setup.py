@@ -15,7 +15,7 @@ def install(appname):
 
     setup(
           name = appname,
-          version = "0.1.2",
+          version = "0.1.3",
           description = '''A tool for retrying linkchecker''',
           long_description =  readme,
           url = 'https://github.com/terryyin/linkchecker-tryer',

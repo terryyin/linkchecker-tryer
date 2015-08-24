@@ -12,7 +12,7 @@ def parse_linkchecker_output(linkchecker_output):
     def read_one(block):
         return {"url":block[0], "name":block[1], "parent_url":block[2]}
 
-    return [read_one(x) for x in set(pattern.findall(linkchecker_output))]
+    return {x[0]:read_one(x) for x in pattern.findall(linkchecker_output)}.values()
 
 
 def bad_link(link):

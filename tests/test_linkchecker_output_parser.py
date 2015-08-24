@@ -9,6 +9,14 @@ Parent URL parent_url
 Check time 0.059 seconds
 '''
 
+raw_link_checker_output2 = '''
+URL        `https://link'
+Name       `name'
+Parent URL parent_url 2
+Check time 0.059 seconds
+'''
+
+
 
 class Test_parse_raw_output(unittest.TestCase):
 
@@ -21,8 +29,8 @@ class Test_parse_raw_output(unittest.TestCase):
         self.assertEqual(result, [{"url":"https://link", "name":"name", "parent_url":"parent_url"}])
 
     def test_no_duplicates(self):
-        result = parse_linkchecker_output(raw_link_checker_output*2)
-        self.assertEqual(result, [{"url":"https://link", "name":"name", "parent_url":"parent_url"}])
+        result = parse_linkchecker_output(raw_link_checker_output + raw_link_checker_output2)
+        self.assertEqual(result, [{"url":"https://link", "name":"name", "parent_url":"parent_url 2"}])
 
 
 
