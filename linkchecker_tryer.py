@@ -24,11 +24,15 @@ def filter_out_good_links(links, filter_function):
     return filter(filter_function, links)
 
 
+def input_lines():
+    for line in fileinput.input():
+        print line,
+        yield line
 def main():
     result = reduce(
             filter_out_good_links,
             [bad_link] * 3,
             parse_linkchecker_output(
-                ''.join([x for x in fileinput.input()])))
+                ''.join(input_lines())))
     pprint(result)
     if result: sys.exit(1)
