@@ -16,11 +16,14 @@ def parse_linkchecker_output(linkchecker_output):
 
 
 def bad_link(link):
+    print "--CHECKING" + link["url"]
     return call(["linkchecker", "-r0", link["url"]]) != 0
 
 
 def filter_out_good_links(links, filter_function):
     if links: time.sleep(10)
+    print "************ TRYING AGAIN *****************"
+    pprint(links)
     return filter(filter_function, links)
 
 
