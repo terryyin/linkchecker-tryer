@@ -21,7 +21,7 @@ def bad_link(link):
 
 
 def filter_out_good_links(links, filter_function):
-    if links: time.sleep(10)
+    if links: time.sleep(30)
     print "************ TRYING AGAIN *****************"
     pprint(links)
     return filter(filter_function, links)
@@ -37,5 +37,7 @@ def main():
             [bad_link] * 3,
             parse_linkchecker_output(
                 ''.join(input_lines())))
+    print("\n")
+    print("----------=========FINAL RESULT========----------")
     pprint(result)
     if result: sys.exit(1)
