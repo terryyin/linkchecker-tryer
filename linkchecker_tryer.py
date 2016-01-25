@@ -1,43 +1,39 @@
 import re, sys, time
-from pprint import pprint
 import fileinput
 from subprocess import call
 
 
 def parse_linkchecker_output(linkchecker_output):
-    pattern = re.compile(r"^URL\s+\`(.*?)\'$\n" +
-                         r"^Name\s+\`(.*?)\'$\n" +
-                         r"^Parent URL\s+(.*?)$", flags=re.M + re.S)
+    pattern = re.compile(r"^URL\s+\`(?P<url>.*?)\'$\n" +
+                         r"(^Name\s+\`(?P<name>.*?)\'$\n)?" +
+                         r"^Parent URL\s+(?P<parent>.*?)$", flags=re.M + re.S)
 
     def read_one(block):
-        return {"url":block[0], "name":block[1], "parent_url":block[2]}
+        return {"url":block.group("url"), "name":block.group("name"), "parent_url":block.group("parent"), "message":block.group(0)}
 
-    return {x[0]:read_one(x) for x in pattern.findall(linkchecker_output)}.values()
+    return {x.group("url"):read_one(x) for x in pattern.finditer(linkchecker_output)}.values()
 
 
 def bad_link(link):
-    print "--CHECKING" + link["url"]
     return call(["linkchecker", "-r0", link["url"]]) != 0
 
 
 def filter_out_good_links(links, filter_function):
     if links: time.sleep(30)
-    print "************ TRYING AGAIN *****************"
-    pprint(links)
     return filter(filter_function, links)
 
 
-def input_lines():
-    for line in fileinput.input():
-        print line,
-        yield line
 def main():
     result = reduce(
             filter_out_good_links,
             [bad_link] * 3,
             parse_linkchecker_output(
-                ''.join(input_lines())))
+                ''.join(fileinput.input())))
     print("\n")
+    print("-------------------------------------------------")
     print("----------=========FINAL RESULT========----------")
-    pprint(result)
+    print("-------------------------------------------------")
+    for r in result:
+        print(r["message"])
+        print()
     if result: sys.exit(1)

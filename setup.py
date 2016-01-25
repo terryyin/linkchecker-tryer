@@ -10,12 +10,15 @@ import os
 
 def install(appname):
 
-    with open(os.path.join(os.path.dirname(__file__), 'README.md')) as fobj:
-        readme = fobj.read()
+    try:
+        with open(os.path.join(os.path.dirname(__file__), 'README.md')) as fobj:
+            readme = fobj.read()
+    except IOError:
+        readme = "helper for linkchecker"
 
     setup(
           name = appname,
-          version = "0.1.5",
+          version = "0.2.1",
           description = '''A tool for retrying linkchecker''',
           long_description =  readme,
           url = 'https://github.com/terryyin/linkchecker-tryer',
