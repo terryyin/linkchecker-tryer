@@ -7,6 +7,7 @@ URL        `https://link'
 Name       `name'
 Parent URL parent_url
 Check time 0.059 seconds
+Result     Error: 404 Not Found
 '''
 
 raw_link_checker_output2 = '''
@@ -14,6 +15,7 @@ URL        `https://link'
 Name       `name'
 Parent URL parent_url 2
 Check time 0.059 seconds
+Result     Error: 404 Not Found
 '''
 
 raw_link_checker_output3 = '''
@@ -41,12 +43,18 @@ class Test_parse_raw_output(unittest.TestCase):
     def test_no_duplicates(self):
         result = parse_linkchecker_output(raw_link_checker_output + "\n" +raw_link_checker_output2)
         del result[0]["message"]
-        self.assertEqual(result, [{"url":"https://link", "name":"name", "parent_url":"parent_url 2"}])
+        self.assertEqual(result, [{"url":"https://link", "name":"name", "parent_url":"parent_url"}])
 
     def test_when_no_name_given(self):
         result = parse_linkchecker_output(raw_link_checker_output3)
         del result[0]["message"]
         self.assertEqual(result, [{"url":"http://data-vocabulary.org/Event", "name":None, "parent_url":"parent_url"}])
+
+    def test_when_no_name_given(self):
+        result = parse_linkchecker_output(raw_link_checker_output3)
+        self.assertEqual(result[0]["message"], raw_link_checker_output3.strip())
+
+
 
 
 

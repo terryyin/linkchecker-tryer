@@ -1,12 +1,14 @@
-import re, sys, time
+import re, sys, time, os
 import fileinput
-from subprocess import call
+from subprocess import call, STDOUT
 
 
 def parse_linkchecker_output(linkchecker_output):
     pattern = re.compile(r"^URL\s+\`(?P<url>.*?)\'$\n" +
                          r"(^Name\s+\`(?P<name>.*?)\'$\n)?" +
-                         r"^Parent URL\s+(?P<parent>.*?)$", flags=re.M + re.S)
+                         r"^Parent URL\s+(?P<parent>.*?)$\n"+
+                         r".*^Result\s+(?P<result>.*?)$"
+                         , flags=re.M + re.S)
 
     def read_one(block):
         return {"url":block.group("url"), "name":block.group("name"), "parent_url":block.group("parent"), "message":block.group(0)}
@@ -15,7 +17,8 @@ def parse_linkchecker_output(linkchecker_output):
 
 
 def bad_link(link):
-    return call(["linkchecker", "-r0", link["url"]]) != 0
+    with open(os.devnull, 'w') as FNULL:
+        return call(["linkchecker", "-r0", link["url"]], stdout=FNULL, stderr=STDOUT) != 0
 
 
 def filter_out_good_links(links, filter_function):
@@ -35,5 +38,5 @@ def main():
     print("-------------------------------------------------")
     for r in result:
         print(r["message"])
-        print()
+        print
     if result: sys.exit(1)
