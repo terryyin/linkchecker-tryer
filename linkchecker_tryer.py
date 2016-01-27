@@ -7,13 +7,18 @@ def parse_linkchecker_output(linkchecker_output):
     pattern = re.compile(r"^URL\s+\`(?P<url>.*?)\'$\n" +
                          r"(^Name\s+\`(?P<name>.*?)\'$\n)?" +
                          r"^Parent URL\s+(?P<parent>.*?)$\n"+
-                         r".*^Result\s+(?P<result>.*?)$"
+                         r".*?^Result\s+(?P<result>.*?)$"
                          , flags=re.M + re.S)
+    de_quote = re.compile(r"\`(.*)\'")
 
     def read_one(block):
-        return {"url":block.group("url"), "name":block.group("name"), "parent_url":block.group("parent"), "message":block.group(0)}
+        return {
+                "url":block.group("url"),
+                "name":block.group("name"),
+                "parent_url":block.group("parent"),
+                "message":de_quote.sub(r'\1', block.group(0))}
 
-    return {x.group("url"):read_one(x) for x in pattern.finditer(linkchecker_output)}.values()
+    return {str(x.group("url")):read_one(x) for x in pattern.finditer(linkchecker_output)}.values()
 
 
 def bad_link(link):
